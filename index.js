@@ -63,11 +63,10 @@ function draw(bubbles) {
     var exit = update.exit();
     var enter = update.enter()
         .append("g")
-        .attr("class", "bubble");
+        .attr("class", "bubble")
+        .attr("transform", d => `translate(${d.x}, ${d.y})`);
     //气泡开始
     enter.append("circle")
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
         .attr("fill", d => d.color)
         .transition()
         .duration(1000)
@@ -75,14 +74,11 @@ function draw(bubbles) {
     //文字标题
     enter.append("text")
         .attr("class", "name")
-        .attr("x", d => d.x)
-        .attr("y", d => d.y)
         .text(d => d.name);
     //值
     enter.append("text")
         .attr("class", "value")
-        .attr("x", d => d.x)
-        .attr("y", d => d.y + 10)
+        .attr("y", 10)
         .transition()
         .duration(1000)
         .tween("text", function (d) {
@@ -90,6 +86,7 @@ function draw(bubbles) {
             return t => this.textContent = i(t).toFixed(3);
         });
 
+    //更新气泡
     update.select("circle")
         .transition()
         .duration(1000)
@@ -102,6 +99,7 @@ function draw(bubbles) {
             return t => this.textContent = i(t).toFixed(3);
         });
 
+    //删除气泡
     exit.select("circle")
         .transition()
         .duration(1000)
