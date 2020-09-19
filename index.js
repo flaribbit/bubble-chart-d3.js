@@ -83,7 +83,7 @@ function draw(bubbles) {
         .duration(1000)
         .tween("text", function (d) {
             var i = d3.interpolate(0, d.value);
-            return t => this.textContent = Math.floor(i(t));
+            return t => this.textContent = Math.round(i(t));
         });
 
     //更新气泡
@@ -96,7 +96,7 @@ function draw(bubbles) {
         .duration(1000)
         .tween("text", function (d) {
             var i = d3.interpolate(this.textContent, d.value);
-            return t => this.textContent = Math.floor(i(t));
+            return t => this.textContent = Math.round(i(t));
         });
 
     //删除气泡
@@ -109,7 +109,7 @@ function draw(bubbles) {
         .duration(1000)
         .tween("text", function () {
             var i = d3.interpolate(this.textContent, 0);
-            return t => this.textContent = Math.floor(i(t));
+            return t => this.textContent = Math.round(i(t));
         });
     exit
         .transition()
