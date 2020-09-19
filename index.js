@@ -30,6 +30,10 @@ function groupData(list) {
     return grouped;
 }
 
+function random(a, b) {
+    return a + (b - a) * Math.random();
+}
+
 function visual(data) {
     var bubbles;
     var currentTime;
@@ -43,9 +47,9 @@ function visual(data) {
             return {
                 time: currentTime,
                 name: e.name,
-                x: 0,
-                y: 0,
-                color: ""
+                x: random(0, 1280),
+                y: random(0, 720),
+                color: data.color[e.name]
             }
         });
         update(bubbles);
