@@ -3,26 +3,39 @@ inputFile.onchange = function () {
     reader.readAsText(this.files[0], config.encoding);
     reader.onload = function () {
         var data = d3.csvParse(this.result);
-        try {
-            visual(groupBy(data, "time"));
-        } catch (error) {
-            alert(error);
-        }
+        visual(groupData(data));
+        // try {
+        //     visual(groupData(data, "time"));
+        // } catch (error) {
+        //     alert(error);
+        // }
     }
     this.hidden = true;
+}
+
+function groupData(list) {
+    var grouped = { time: [], color: {} };
+    var i = 0;
+    list.forEach(e => {
+        if (!grouped[e.time]) {
+            grouped[e.time] = [];
+            grouped.time.push(e.time);
+        }
+        grouped[e.time].push(e);
+        if (!grouped.color[e.name]) {
+            grouped.color[e.name] = colors[i % colors.length];
+            i++;
+        }
+    });
+    return grouped;
 }
 
 function visual(data) {
     var bubbles;
     var currentTime;
     var names = [];
-    data = [{ time: "", name: "1", value: 0 }];
-    data.forEach(e => {
-        if (!(e.name in names)) {
-            names.push(e.name);
-        }
-    });
     console.log(names);
+    console.log(data);
     var i = 0;
     setInterval(() => {
         currentTime = data.key[i];
@@ -39,17 +52,6 @@ function visual(data) {
         draw(bubbles);
         i++;
     });
-}
-
-function groupBy(list, key) {
-    var grouped = { keys: [] };
-    list.forEach(e => {
-        if (!(e[key] in grouped)) {
-            grouped[key] = [];
-        }
-        grouped[key].push(e);
-    });
-    return grouped;
 }
 
 function draw(bubbles) {
