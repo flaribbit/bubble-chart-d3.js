@@ -37,9 +37,8 @@ function random(a, b) {
 function visual(data) {
     var bubbles;
     var currentTime;
-    console.log(data);
     var i = 0;
-    setInterval(() => {
+    var timer = setInterval(() => {
         currentTime = data.time[i];
         bubbles = data[currentTime].map(e => {
             return {
@@ -53,7 +52,9 @@ function visual(data) {
         });
         update(bubbles);
         draw(bubbles);
-        i++;
+        if (++i >= data.time.length) {
+            clearInterval(timer);
+        }
     }, 1000);
 }
 
@@ -100,20 +101,22 @@ function draw(bubbles) {
         });
 
     //删除气泡
+    //注意如果remove晚于数据更新会失效
+    //所以才会出现数据跑完才删除的情况
     exit.select("circle")
         .transition()
-        .duration(1000)
+        .duration(960)
         .attr("r", 0);
     exit.select(".value")
         .transition()
-        .duration(1000)
+        .duration(960)
         .tween("text", function () {
             var i = d3.interpolate(this.textContent, 0);
             return t => this.textContent = Math.round(i(t));
         });
     exit
         .transition()
-        .duration(1000)
+        .duration(960)
         .remove();
 }
 
