@@ -45,7 +45,7 @@ function visual(data) {
             return {
                 time: currentTime,
                 name: e.name,
-                value: Math.sqrt(Number(e.value)) / 10,
+                value: Number(e.value),
                 x: random(0, 1280),
                 y: random(0, 720),
                 color: data.color[e.name],
@@ -59,7 +59,7 @@ function visual(data) {
 
 function draw(bubbles) {
     var svg = d3.select("svg");
-    var update = svg.selectAll("g").data(bubbles, d => d.name);
+    var update = svg.selectAll("g.bubble").data(bubbles, d => d.name);
     var exit = update.exit();
     var enter = update.enter()
         .append("g")
@@ -70,7 +70,7 @@ function draw(bubbles) {
         .attr("fill", d => d.color)
         .transition()
         .duration(1000)
-        .attr("r", d => d.value);
+        .attr("r", d => Math.sqrt(Number(d.value)) / 10);
     //文字标题
     enter.append("text")
         .attr("class", "name")
@@ -78,25 +78,25 @@ function draw(bubbles) {
     //值
     enter.append("text")
         .attr("class", "value")
-        .attr("y", 10)
+        .attr("y", 14)
         .transition()
         .duration(1000)
         .tween("text", function (d) {
             var i = d3.interpolate(0, d.value);
-            return t => this.textContent = i(t).toFixed(3);
+            return t => this.textContent = Math.floor(i(t));
         });
 
     //更新气泡
     update.select("circle")
         .transition()
         .duration(1000)
-        .attr("r", d => d.value);
+        .attr("r", d => Math.sqrt(Number(d.value)) / 10);
     update.select(".value")
         .transition()
         .duration(1000)
         .tween("text", function (d) {
             var i = d3.interpolate(this.textContent, d.value);
-            return t => this.textContent = i(t).toFixed(3);
+            return t => this.textContent = Math.floor(i(t));
         });
 
     //删除气泡
@@ -109,11 +109,11 @@ function draw(bubbles) {
         .duration(1000)
         .tween("text", function () {
             var i = d3.interpolate(this.textContent, 0);
-            return t => this.textContent = i(t).toFixed(3);
+            return t => this.textContent = Math.floor(i(t));
         });
     exit
         .transition()
-        .duration(1100)
+        .duration(1000)
         .remove();
 }
 
