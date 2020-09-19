@@ -39,13 +39,13 @@ function visual(data) {
     var currentTime;
     console.log(data);
     var i = 0;
-    setTimeout(() => {
+    setInterval(() => {
         currentTime = data.time[i];
         bubbles = data[currentTime].map(e => {
             return {
                 time: currentTime,
                 name: e.name,
-                value: Number(e.value) / 10000,
+                value: Math.sqrt(Number(e.value)) / 10,
                 x: random(0, 1280),
                 y: random(0, 720),
                 color: data.color[e.name],
@@ -54,7 +54,7 @@ function visual(data) {
         update(bubbles);
         draw(bubbles);
         i++;
-    }, 10);
+    }, 1000);
 }
 
 function draw(bubbles) {
@@ -64,7 +64,6 @@ function draw(bubbles) {
     var exit = update.exit();
     enter
         .append("circle")
-        .attr("class", "bubble")
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
         .attr("fill", d => d.color)
@@ -75,7 +74,30 @@ function draw(bubbles) {
         .attr("class", "name")
         .attr("x", d => d.x)
         .attr("y", d => d.y)
-        .text(d => d.name)
+        .text(d => d.name);
+    enter.append("text")
+        .attr("class", "value")
+        .attr("x", d => d.x)
+        .attr("y", d => d.y + 10)
+        .text(d => Math.round(d.value));
+    update
+        .transition()
+        .duration(1000)
+        .attr("r", d => d.value);
+    svg.selectAll("text.value").data(bubbles, d => d.name)
+        .transition()
+        .duration(1000)
+        .tween("text", function (d) {
+            var i = d3.interpolate(this.textContent, d.value);
+            return t => this.textContent = i(t).toFixed(3);
+        });
+    exit
+        .transition()
+        .duration(1000)
+        .attr("r", 0)
+        .remove();
+    svg.selectAll("text.name").data(bubbles, d => d.name).exit()
+        .remove();
 }
 
 function update(bubbles) {
