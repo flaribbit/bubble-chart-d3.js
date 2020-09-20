@@ -22,6 +22,7 @@ function groupData(list) {
     var grouped = { time: [], color: {} };
     var i = 0;
     list.forEach(e => {
+        e.value = Number(e.value);
         if (!grouped[e.time]) {
             grouped[e.time] = [];
             grouped.time.push(e.time);
@@ -45,16 +46,22 @@ function visual(data) {
     var updateTimer = setInterval(update, config.updateInterval);
     //更新气泡数据
     var timer = setInterval(() => {
-        //取出当前时间的数据
+        //取出当前时间的数据 并计算面积
+        var area = 0;
         var currentTime = data.time[i];
         var bubbles = data[currentTime].map(e => {
+            area += e.value;
             return {
                 time: currentTime,
                 name: e.name,
-                value: Number(e.value),
+                value: e.value,
                 color: data.color[e.name],
             }
         });
+        //根据面积对气泡缩放
+        if (area > 0) {
+            scale = 1280 * 720 * 25 / area;
+        }
         //绘制气泡
         draw(bubbles);
         //动画完成后停止
@@ -67,7 +74,7 @@ function visual(data) {
 
 //用于调整气泡大小
 function rescale(x) {
-    return Math.sqrt(x) * scale / 10;
+    return Math.sqrt(x * scale) / 10;
 }
 
 //用于控制数据显示的格式
