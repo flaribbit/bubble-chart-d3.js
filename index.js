@@ -126,5 +126,52 @@ function draw(bubbles) {
 }
 
 function update() {
-    var svg = d3.select("svg");
+    var bubbles = [];
+    var circles = d3.select("svg").selectAll("circle");
+    circles.each(function (d) {
+        var self = d3.select(this);
+        console.log(this);
+        bubbles.push({
+            name: d.name,
+            x: self.attr("cx"),//错误
+            y: self.attr("cy"),//错误
+            r: self.attr("r")
+        });
+    });
+    console.log(bubbles);
+    updatePhysics(bubbles);
+    d3.select("svg").selectAll("g.bubble").data(bubbles, d => d.name)
+        .transition()
+        .ease(d3.easeLinear)
+        .duration(config.updateInterval)
+        .attr("transform", d => `translate(${d.x}, ${d.y})`);
+}
+
+function updatePhysics(bubbles) {
+    const elasticity = 0.6;
+    for (var i = 0; i < bubbles.length; i++) {
+        if (bubbles[i].x + bubbles[i].r > 1280) {
+            bubbles[i].x -= elasticity * (bubbles[i].x + bubbles[i].r - 1280);
+        } else if (bubbles[i].x - bubbles[i].r < 0) {
+            bubbles[i].x -= elasticity * (bubbles[i].x - bubbles[i].r);
+        }
+        if (bubbles[i].y + bubbles[i].r > 720) {
+            bubbles[i].y -= elasticity * (bubbles[i].y + bubbles[i].r - 720);
+        } else if (bubbles[i].y - bubbles[i].r < 0) {
+            bubbles[i].y -= elasticity * (bubbles[i].y - bubbles[i].r);
+        }
+        for (var j = i + 1; j < bubbles.length; j++) {
+            var dx = bubbles[j].x - bubbles[i].x;
+            var dy = bubbles[j].y - bubbles[i].y;
+            var distance = Math.sqrt(dx * dx + dy * dy);
+            var t = distance - bubbles[i].r - bubbles[j].r;
+            if (t < 0) {
+                t = t * elasticity / distance;
+                bubbles[i].x += dx * t;
+                bubbles[i].y += dy * t;
+                bubbles[j].x -= dx * t;
+                bubbles[j].y -= dy * t;
+            }
+        }
+    }
 }
