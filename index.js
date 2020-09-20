@@ -70,6 +70,8 @@ function draw(bubbles) {
     var enter = update.enter()
         .append("g")
         .attr("class", "bubble")
+        .append("g")
+        .attr("class", "move")
         .attr("transform", () => `translate(${random(0, 1280)}, ${random(0, 720)})`);
     //气泡开始
     enter.append("circle")
@@ -140,7 +142,7 @@ function update() {
     });
     console.log(bubbles);
     updatePhysics(bubbles);
-    d3.select("svg").selectAll("g.bubble").data(bubbles, d => d.name)
+    d3.select("svg").selectAll("g.move").data(bubbles, d => d.name)
         .transition()
         .ease(d3.easeLinear)
         .duration(config.updateInterval)
