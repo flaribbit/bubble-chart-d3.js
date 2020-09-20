@@ -38,6 +38,7 @@ function visual(data) {
     var bubbles;
     var currentTime;
     var i = 0;
+    var updateTimer = setInterval(update, config.updateInterval);
     var timer = setInterval(() => {
         currentTime = data.time[i];
         bubbles = data[currentTime].map(e => {
@@ -48,12 +49,12 @@ function visual(data) {
                 color: data.color[e.name],
             }
         });
-        update(bubbles);
         draw(bubbles);
         if (++i >= data.time.length) {
             clearInterval(timer);
+            clearInterval(updateTimer);
         }
-    }, 1000);
+    }, config.timeInterval);
 }
 
 function rescale(x) {
@@ -126,6 +127,6 @@ function draw(bubbles) {
         .remove();
 }
 
-function update(bubbles) {
+function update() {
     var svg = d3.select("svg");
 }
