@@ -60,7 +60,7 @@ function visual(data) {
         });
         //根据面积对气泡缩放
         if (area > 0) {
-            scale = 1280 * 720 * 25 / area;
+            scale = 1280 * 720 * 20 / area;
         }
         //绘制气泡
         draw(bubbles);
@@ -156,7 +156,7 @@ function update() {
             name: d.name,
             x: ctm.e,
             y: ctm.f,
-            r: d3.select(this).attr("r")
+            r: Number(d3.select(this).attr("r"))
         });
     });
     //相互排斥
@@ -190,17 +190,16 @@ function randomTranslate() {
 
 //相互排斥
 function updatePhysics(bubbles) {
-    const elasticity = 0.2;
     for (var i = 0; i < bubbles.length; i++) {
         if (bubbles[i].x + bubbles[i].r > 1280) {
-            bubbles[i].x -= elasticity * (bubbles[i].x + bubbles[i].r - 1280);
+            bubbles[i].x -= 0.6 * (bubbles[i].x + bubbles[i].r - 1280);
         } else if (bubbles[i].x - bubbles[i].r < 0) {
-            bubbles[i].x -= elasticity * (bubbles[i].x - bubbles[i].r);
+            bubbles[i].x -= 0.6 * (bubbles[i].x - bubbles[i].r);
         }
         if (bubbles[i].y + bubbles[i].r > 720) {
-            bubbles[i].y -= elasticity * (bubbles[i].y + bubbles[i].r - 720);
+            bubbles[i].y -= 0.6 * (bubbles[i].y + bubbles[i].r - 720);
         } else if (bubbles[i].y - bubbles[i].r < 0) {
-            bubbles[i].y -= elasticity * (bubbles[i].y - bubbles[i].r);
+            bubbles[i].y -= 0.6 * (bubbles[i].y - bubbles[i].r);
         }
         for (var j = i + 1; j < bubbles.length; j++) {
             var dx = bubbles[j].x - bubbles[i].x;
@@ -208,7 +207,7 @@ function updatePhysics(bubbles) {
             var distance = Math.sqrt(dx * dx + dy * dy);
             var t = distance - bubbles[i].r - bubbles[j].r;
             if (t < 0) {
-                t = t * elasticity / distance;
+                t = t * 0.2 / distance;
                 bubbles[i].x += dx * t;
                 bubbles[i].y += dy * t;
                 bubbles[j].x -= dx * t;
