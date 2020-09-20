@@ -1,5 +1,6 @@
 var bubbles = [];
 
+//打开文件 读取数据
 inputFile.onchange = function () {
     var reader = new FileReader();
     reader.readAsText(this.files[0], config.encoding);
@@ -15,6 +16,7 @@ inputFile.onchange = function () {
     this.hidden = true;
 }
 
+//数据预处理 按时间分组并计算颜色
 function groupData(list) {
     var grouped = { time: [], color: {} };
     var i = 0;
@@ -38,8 +40,11 @@ function random(a, b) {
 
 function visual(data) {
     var i = 0;
+    //更新气泡位置
     var updateTimer = setInterval(update, config.updateInterval);
+    //更新气泡数据
     var timer = setInterval(() => {
+        //取出当前时间的数据
         var currentTime = data.time[i];
         var bubbles = data[currentTime].map(e => {
             return {
@@ -49,7 +54,9 @@ function visual(data) {
                 color: data.color[e.name],
             }
         });
+        //绘制气泡
         draw(bubbles);
+        //动画完成后停止
         if (++i >= data.time.length) {
             clearInterval(timer);
             clearInterval(updateTimer);
@@ -57,10 +64,12 @@ function visual(data) {
     }, config.timeInterval);
 }
 
+//用于调整气泡大小
 function rescale(x) {
     return Math.sqrt(x) / 10;
 }
 
+//用于控制数据显示的格式
 function format(x) {
     return Math.round(x);
 }
@@ -129,20 +138,22 @@ function draw(bubbles) {
         .remove();
 }
 
+//更新气泡位置
 function update() {
+    //获取所有气泡的坐标和半径
     bubbles = [];
-    var circles = d3.select("svg").selectAll("circle");
-    circles.each(function (d) {
+    d3.select("svg").selectAll("circle").each(function (d) {
         var ctm = this.getCTM();
-        var self = d3.select(this);
         bubbles.push({
             name: d.name,
             x: ctm.e,
             y: ctm.f,
-            r: self.attr("r")
+            r: d3.select(this).attr("r")
         });
     });
+    //相互排斥
     updatePhysics(bubbles);
+    //更新位置
     d3.select("svg").selectAll("g.move").data(bubbles, d => d.name)
         .transition()
         .ease(d3.easeLinear)
@@ -150,6 +161,7 @@ function update() {
         .attr("transform", d => `translate(${d.x}, ${d.y})`);
 }
 
+//随机一个不重叠的位置
 function randomTranslate() {
     var x = random(0, 1280);
     var y = random(0, 720);
@@ -166,6 +178,7 @@ function randomTranslate() {
     return `translate(${random(0, 1280)}, ${random(0, 720)})`;
 }
 
+//相互排斥
 function updatePhysics(bubbles) {
     const elasticity = 0.6;
     for (var i = 0; i < bubbles.length; i++) {
