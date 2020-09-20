@@ -1,4 +1,5 @@
 var bubbles = [];
+var scale = 1;
 
 //打开文件 读取数据
 inputFile.onchange = function () {
@@ -66,7 +67,7 @@ function visual(data) {
 
 //用于调整气泡大小
 function rescale(x) {
-    return Math.sqrt(x) / 10;
+    return Math.sqrt(x) * scale / 10;
 }
 
 //用于控制数据显示的格式
@@ -152,7 +153,9 @@ function update() {
         });
     });
     //相互排斥
-    updatePhysics(bubbles);
+    for (var i = 0; i < config.iteration; i++) {
+        updatePhysics(bubbles);
+    }
     //更新位置
     d3.select("svg").selectAll("g.move").data(bubbles, d => d.name)
         .transition()
@@ -180,7 +183,7 @@ function randomTranslate() {
 
 //相互排斥
 function updatePhysics(bubbles) {
-    const elasticity = 0.6;
+    const elasticity = 0.2;
     for (var i = 0; i < bubbles.length; i++) {
         if (bubbles[i].x + bubbles[i].r > 1280) {
             bubbles[i].x -= elasticity * (bubbles[i].x + bubbles[i].r - 1280);
