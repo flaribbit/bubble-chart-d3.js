@@ -35,13 +35,11 @@ function random(a, b) {
 }
 
 function visual(data) {
-    var bubbles;
-    var currentTime;
     var i = 0;
     var updateTimer = setInterval(update, config.updateInterval);
     var timer = setInterval(() => {
-        currentTime = data.time[i];
-        bubbles = data[currentTime].map(e => {
+        var currentTime = data.time[i];
+        var bubbles = data[currentTime].map(e => {
             return {
                 time: currentTime,
                 name: e.name,
