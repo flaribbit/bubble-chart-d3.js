@@ -129,12 +129,12 @@ function update() {
     var bubbles = [];
     var circles = d3.select("svg").selectAll("circle");
     circles.each(function (d) {
+        var ctm = this.getCTM();
         var self = d3.select(this);
-        console.log(this);
         bubbles.push({
             name: d.name,
-            x: self.attr("cx"),//错误
-            y: self.attr("cy"),//错误
+            x: ctm.e,
+            y: ctm.f,
             r: self.attr("r")
         });
     });
