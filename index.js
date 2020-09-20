@@ -1,3 +1,5 @@
+var bubbles = [];
+
 inputFile.onchange = function () {
     var reader = new FileReader();
     reader.readAsText(this.files[0], config.encoding);
@@ -72,7 +74,7 @@ function draw(bubbles) {
         .attr("class", "bubble")
         .append("g")
         .attr("class", "move")
-        .attr("transform", () => `translate(${random(0, 1280)}, ${random(0, 720)})`);
+        .attr("transform", () => randomTranslate());
     //气泡开始
     enter.append("circle")
         .attr("fill", d => d.color)
@@ -128,7 +130,7 @@ function draw(bubbles) {
 }
 
 function update() {
-    var bubbles = [];
+    bubbles = [];
     var circles = d3.select("svg").selectAll("circle");
     circles.each(function (d) {
         var ctm = this.getCTM();
@@ -140,13 +142,28 @@ function update() {
             r: self.attr("r")
         });
     });
-    console.log(bubbles);
     updatePhysics(bubbles);
     d3.select("svg").selectAll("g.move").data(bubbles, d => d.name)
         .transition()
         .ease(d3.easeLinear)
         .duration(config.updateInterval)
         .attr("transform", d => `translate(${d.x}, ${d.y})`);
+}
+
+function randomTranslate() {
+    var x = random(0, 1280);
+    var y = random(0, 720);
+    for (var i = 0; i < bubbles.length; i++) {
+        var dx = x - bubbles[i].x;
+        var dy = y - bubbles[i].y;
+        var distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < bubbles[i].r) {
+            x += dx / distance * bubbles[i].r;
+            y += dy / distance * bubbles[i].r;
+            break;
+        }
+    }
+    return `translate(${random(0, 1280)}, ${random(0, 720)})`;
 }
 
 function updatePhysics(bubbles) {
