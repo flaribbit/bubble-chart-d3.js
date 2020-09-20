@@ -77,7 +77,7 @@ function draw(bubbles) {
     enter.append("circle")
         .attr("fill", d => d.color)
         .transition()
-        .duration(1000)
+        .duration(config.timeInterval)
         .attr("r", d => rescale(d.value));
     //文字标题
     enter.append("text")
@@ -88,7 +88,7 @@ function draw(bubbles) {
         .attr("class", "value")
         .attr("y", 14)
         .transition()
-        .duration(1000)
+        .duration(config.timeInterval)
         .tween("text", function (d) {
             var i = d3.interpolate(0, d.value);
             return t => this.textContent = format(i(t));
@@ -97,11 +97,11 @@ function draw(bubbles) {
     //更新气泡
     update.select("circle")
         .transition()
-        .duration(1000)
+        .duration(config.timeInterval)
         .attr("r", d => rescale(d.value));
     update.select(".value")
         .transition()
-        .duration(1000)
+        .duration(config.timeInterval)
         .tween("text", function (d) {
             var i = d3.interpolate(this.textContent, d.value);
             return t => this.textContent = format(i(t));
@@ -112,18 +112,18 @@ function draw(bubbles) {
     //所以才会出现数据跑完才删除的情况
     exit.select("circle")
         .transition()
-        .duration(960)
+        .duration(0.96 * config.timeInterval)
         .attr("r", 0);
     exit.select(".value")
         .transition()
-        .duration(960)
+        .duration(0.96 * config.timeInterval)
         .tween("text", function () {
             var i = d3.interpolate(this.textContent, 0);
             return t => this.textContent = format(i(t));
         });
     exit
         .transition()
-        .duration(960)
+        .duration(0.96 * config.timeInterval)
         .remove();
 }
 
