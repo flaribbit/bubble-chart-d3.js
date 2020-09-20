@@ -56,6 +56,14 @@ function visual(data) {
     }, 1000);
 }
 
+function rescale(x) {
+    return Math.sqrt(x) / 10;
+}
+
+function format(x) {
+    return Math.round(x);
+}
+
 function draw(bubbles) {
     var svg = d3.select("svg");
     var update = svg.selectAll("g.bubble").data(bubbles, d => d.name);
@@ -69,7 +77,7 @@ function draw(bubbles) {
         .attr("fill", d => d.color)
         .transition()
         .duration(1000)
-        .attr("r", d => Math.sqrt(Number(d.value)) / 10);
+        .attr("r", d => rescale(d.value));
     //文字标题
     enter.append("text")
         .attr("class", "name")
@@ -82,20 +90,20 @@ function draw(bubbles) {
         .duration(1000)
         .tween("text", function (d) {
             var i = d3.interpolate(0, d.value);
-            return t => this.textContent = Math.round(i(t));
+            return t => this.textContent = format(i(t));
         });
 
     //更新气泡
     update.select("circle")
         .transition()
         .duration(1000)
-        .attr("r", d => Math.sqrt(Number(d.value)) / 10);
+        .attr("r", d => rescale(d.value));
     update.select(".value")
         .transition()
         .duration(1000)
         .tween("text", function (d) {
             var i = d3.interpolate(this.textContent, d.value);
-            return t => this.textContent = Math.round(i(t));
+            return t => this.textContent = format(i(t));
         });
 
     //删除气泡
@@ -110,7 +118,7 @@ function draw(bubbles) {
         .duration(960)
         .tween("text", function () {
             var i = d3.interpolate(this.textContent, 0);
-            return t => this.textContent = Math.round(i(t));
+            return t => this.textContent = format(i(t));
         });
     exit
         .transition()
