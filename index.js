@@ -45,8 +45,6 @@ function visual(data) {
                 time: currentTime,
                 name: e.name,
                 value: Number(e.value),
-                x: random(0, 1280),
-                y: random(0, 720),
                 color: data.color[e.name],
             }
         });
@@ -65,7 +63,7 @@ function draw(bubbles) {
     var enter = update.enter()
         .append("g")
         .attr("class", "bubble")
-        .attr("transform", d => `translate(${d.x}, ${d.y})`);
+        .attr("transform", () => `translate(${random(0, 1280)}, ${random(0, 720)})`);
     //气泡开始
     enter.append("circle")
         .attr("fill", d => d.color)
